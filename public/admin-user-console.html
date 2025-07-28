@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title></title>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+         <script>
+        var mymodule= angular.module("kuchModule",[]);
+      
+      mymodule.controller("kuchController",function($scope,$http)
+      {
+
+        $scope.jsonArray=[];
+
+       $scope.doFetch=function()
+       {
+            var url="/do-fetch";
+            
+            $http.get(url).then(allGoodFx,someBadFx);
+            function allGoodFx(response)
+            {
+                //resp in JSON array
+                //alert(JSON.stringify(response.data));
+                $scope.jsonArray=response.data;
+            }
+
+            function someBadFx(response)
+            {
+                
+                alert(JSON.stringify(response.data));
+            }
+       }
+       //----------------------
+       $scope.doResume=function(emailid,status)
+       {
+        
+            var url="/resume-one?emailid="+emailid+"&status="+status;
+            $http.get(url).then(allGoodFx,someBadFx);
+            function allGoodFx(response)
+            {
+                $scope.doFetch();
+            }
+
+            function someBadFx(response)
+            {
+                alert(JSON.stringify(response.data));
+            }
+       }
+
+
+       $scope.doblock=function(emailid,status)
+       {
+        
+           var url="/block-one?emailid="+emailid+"&status="+status;
+            $http.get(url).then(allGoodFx,someBadFx);
+            function allGoodFx(response)
+            {
+              
+                $scope.doFetch();
+            }
+
+            function someBadFx(response)
+            {
+                alert(JSON.stringify(response.data));
+            }
+       }
+
+       })
+
+
+
+    </script>
+    <style>
+        /* Global box-sizing for consistent layouts */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+        }
+
+        /* Navbar adjustments for responsiveness */
+        .navbar {
+            height: 65px;
+            width: 100%;
+            padding: 0 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand-img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            object-fit: cover;
+        }
+
+        .navbar-brand {
+            font-size: 22px !important;
+            margin-left: 8px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Main content container for centering */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px 15px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Responsive table container */
+        .table-responsive-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling for touch devices */
+            padding-bottom: 10px; /* Space for scrollbar */
+        }
+
+        table {
+            width: 100%;
+            min-width: 700px; /* Minimum width to prevent excessive squishing on small screens */
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden; /* Ensures rounded corners apply to table content */
+        }
+
+        table th,
+        table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd; /* Light border for cells */
+            vertical-align: middle;
+        }
+
+        table thead tr {
+            background-color: black;
+            color: white;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f2f2f2; /* Zebra striping for readability */
+        }
+
+        table tbody tr:hover {
+            background-color: #e9e9e9; /* Hover effect */
+        }
+
+        /* Action buttons in table */
+        table .btn-block {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 5px;
+            transition: background-color 0.2s ease;
+        }
+
+        table .btn-block:hover {
+            background-color: #cc0000;
+        }
+
+        table .btn-resume {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+
+        table .btn-resume:hover {
+            background-color: #008000;
+        }
+
+
+        /* Media Queries for Laptop/Tablet */
+        @media (min-width: 768px) {
+            .navbar {
+                height: 80px;
+                padding: 0 40px;
+            }
+
+            .navbar-brand-img {
+                width: 90px;
+                height: 80px;
+                margin-left: 40px;
+            }
+
+            .navbar-brand {
+                font-size: 32px !important;
+                margin-right: auto !important;
+                margin-left: 15px;
+            }
+
+            .main-content {
+                padding: 30px;
+            }
+
+            table {
+                min-width: unset; /* Remove min-width on larger screens */
+                width: 1200px; /* Your desired fixed width for larger screens */
+            }
+        }
+    </style>
+</head>
+<body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetch()">
+
+   
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary">
+        <div class="container-fluid">
+            <img src="./pics/Preview.png" alt="Atriom Logo" class="navbar-brand-img">
+            <a class="navbar-brand" href="/index.html">Atriom</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2>User Admin Console</h2>
+        <input type="hidden" value="fetch" ng-click="doFetch();">
+
+        <div class="table-responsive-container">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr.No.</th>
+                        <th>Email ID</th>
+                        <th>Password</th>
+                        <th>User-Type</th>
+                        <th>Date Of Registration</th>
+                        <th>Status</th>
+                        <th>Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="obj in jsonArray">
+                        <td>{{$index+1}}</td>
+                        <td>{{obj.emailid}}</td>
+                        <td>{{obj.pwd}}</td>
+                        <td>{{obj.userType}}</td>
+                        <td>{{obj.dos}}</td>
+                        <td>{{obj.status}}</td>
+                        <td>
+                            <button class="btn-block" ng-click="doblock(obj.emailid,obj.status);">Block</button>
+                            <button class="btn-resume" ng-click="doResume(obj.emailid,obj.status);">Resume</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <title>Atriom - Find Events</title>
+</head>
+
+<script>
+    var mymodule = angular.module("kuchModule", []);
+
+    mymodule.controller("kuchController", function ($scope, $http) {
+        $scope.jsonAry = [];
+        $scope.Sportss = "Choose"; // Initialize with default value for select
+        $scope.Cityy = "none"; // Initialize with default value for select
+        $scope.age = ""; // Initialize age
+
+        $scope.dofetchman = function (Sports, city) {
+            if (!Sports || Sports === "Choose") {
+                alert("Please select a Sports Category.");
+                return;
+            }
+            if (!city || city === "none") {
+                alert("Please select a City.");
+                return;
+            }
+            if (!$scope.age || $scope.age === "") {
+                alert("Please enter your Age.");
+                return;
+            }
+
+            var url = "/fetch-events?sports=" + Sports + "&city=" + city;
+            $http.get(url).then(allGoodFx, someBadFx);
+            function allGoodFx(response) {
+                if (response.data.length === 0) {
+                    $scope.jsonAry = []; // Clear previous results
+                    alert("No events found for the selected criteria.");
+                } else {
+                    // Filter by age on the client side, as backend might not support it directly
+                    $scope.jsonAry = response.data.filter(function (event) {
+                        return $scope.age >= event.minage && $scope.age <= event.maxage;
+                    });
+
+                    if ($scope.jsonAry.length === 0) {
+                        alert("No events found within the specified age range.");
+                    }
+                }
+            }
+
+            function someBadFx(response) {
+                alert("Error fetching events: " + (response.data || "Unknown error"));
+            }
+        };
+
+        //==================================================
+
+        $scope.cities = []; // Initialize as empty array
+        $scope.doFetchAlCities = function () {
+            var url = "/do-fetch-all-cities";
+
+            $http.get(url).then(allGoodFx, someBadFx);
+            function allGoodFx(response) {
+                $scope.cities = response.data;
+            }
+
+            function someBadFx(response) {
+                alert("Error fetching cities: " + (response.data || "Unknown error"));
+            }
+        };
+        //=================================================
+        $scope.oneRecord = {};
+        $scope.doShowDetails = function (record) {
+            $scope.oneRecord = record;
+        };
+    });
+</script>
+
+<style>
+    /* Global box-sizing for consistent layouts */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Navbar adjustments for responsiveness */
+    .navbar {
+        height: 65px;
+        width: 100%;
+        padding: 0 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand-img {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-left: 10px;
+        margin-top: 0 !important;
+        object-fit: cover;
+    }
+
+    .navbar-brand {
+        font-size: 22px !important;
+        margin-right: auto !important;
+        margin-left: 8px;
+    }
+
+    /* Main content area */
+    .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* Search form layout */
+    .search-form-container {
+        width: 100%;
+        max-width: 600px;
+        /* Constrain width on larger screens */
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 0 10px;
+        /* Padding for small screens */
+    }
+
+    .search-input-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .search-input-group .form-label {
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-align: left;
+        width: 100%;
+    }
+
+    .search-input-group select,
+    .search-input-group input[type="number"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        height: auto;
+        /* Allow height to adjust */
+    }
+
+    .search-button {
+        width: 80%;
+        /* Make button wider on mobile */
+        max-width: 200px;
+        /* Limit max width */
+        margin-top: 10px;
+        padding: 10px 15px;
+        font-size: 1.05rem;
+    }
+
+    /* Event Cards Grid */
+    .event-cards-container {
+        width: 100%;
+        padding: 0 10px;
+        /* Padding for the grid */
+        justify-content: center;
+        /* Center cards if they don't fill the row */
+    }
+
+    .event-card-col {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .event-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        width: 250px;
+        /* Fixed width for cards on mobile to ensure consistency */
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .event-card-img {
+        width: 100%;
+        height: 200px;
+        /* Consistent image height */
+        object-fit: cover;
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+        padding: 10px 10px 0px 10px;
+        border-radius: 50%;
+        /* Adjusted for circular image within card */
+        align-self: center;
+    }
+
+    .event-card-body {
+        padding: 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .event-card-body .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .event-card-body p {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .event-card-body .btn {
+        width: 80%;
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+
+    /* Modal Adjustments for Responsiveness */
+    .modal-dialog {
+        max-width: 95%;
+        /* Wider modal on smaller screens */
+        margin: 1rem auto;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+
+    .modal-header {
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .modal-body p {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 8px;
+    }
+
+    .modal-footer {
+        padding-top: 15px;
+        justify-content: flex-end;
+        /* Align buttons to the right */
+        border-top: none;
+    }
+
+    .modal-footer .btn {
+        min-width: 90px;
+        /* Ensure buttons have minimum width */
+        margin-left: 10px;
+        /* Space between buttons */
+    }
+
+    /* --- Media Queries for Laptop/Tablet --- */
+    @media (min-width: 576px) {
+        .event-card {
+            width: 280px;
+            /* Slightly larger fixed width for sm screens */
+        }
+    }
+
+    @media (min-width: 768px) {
+        .navbar {
+            height: 80px;
+            padding: 0 40px;
+        }
+
+        .navbar-brand-img {
+            width: 90px;
+            height: 80px;
+            margin-left: 40px;
+        }
+
+        .navbar-brand {
+            font-size: 32px !important;
+            margin-right: 1220px !important;
+            margin-left: 15px;
+        }
+
+        .main-content {
+            padding: 30px 40px;
+        }
+
+        .search-form-container {
+            flex-direction: row;
+            /* Arrange horizontally */
+            justify-content: center;
+            align-items: flex-end;
+            /* Align at the bottom */
+            gap: 20px;
+            padding: 0;
+            max-width: none;
+            /* Remove max-width */
+            width: auto;
+            /* Auto width */
+        }
+
+        .search-input-group {
+            flex-direction: row;
+            align-items: center;
+            width: auto;
+            gap: 15px;
+        }
+
+        .search-input-group > div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .search-input-group label {
+            margin-bottom: 5px;
+            /* Space between label and input */
+            text-align: left;
+            width: auto;
+        }
+
+        .search-input-group select,
+        .search-input-group input[type="number"] {
+            width: 130px;
+            /* Fixed width for desktop select/input */
+            height: 38px;
+            /* Standard Bootstrap input height */
+        }
+
+        #age {
+            width: 100px;
+        }
+
+
+        .search-button {
+            width: auto;
+            /* Auto width for button */
+            padding: 10px 20px;
+            margin-top: 0;
+            margin-left: 15px;
+            /* Space from last input */
+        }
+
+
+        .event-cards-container .col-md-3 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+            /* 3 cards per row */
+        }
+
+        .event-card {
+            width: 100%;
+            /* Card takes full width of its column */
+        }
+
+        .modal-dialog {
+            max-width: 600px;
+            /* Optimal width for modal on desktop */
+            margin: 1.75rem auto;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .event-cards-container .col-md-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            /* 4 cards per row on large screens */
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .event-cards-container .col-md-3 {
+            flex: 0 0 20%;
+            max-width: 20%;
+            /* 5 cards per row on extra large screens */
+        }
+    }
+</style>
+
+<body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetchAlCities();">
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary">
+        <div class="container-fluid">
+            <img src="./pics/Preview.png" alt="Atriom Logo" class="navbar-brand-img">
+            <a class="navbar-brand" href="/index.html">Atriom</a>
+            </div>
+    </nav><br>
+
+    <div class="main-content">
+        <h2>Find Events</h2>
+
+        <div class="search-form-container">
+            <div class="search-input-group">
+                <div>
+                    <label class="form-label" for="Sportss">Sports Category</label>
+                    <select id="Sportss" ng-model="Sportss" name="Sportss" class="form-select">
+                        <option value="Choose">Choose</option>
+                        <option value="Cricket">Cricket</option>
+                        <option value="Hockey">Hockey</option>
+                        <option value="Football">Football</option>
+                        <option value="Badminton">Badminton</option>
+                        <option value="Boxing">Boxing</option>
+                        <option value="Wrestling">Wrestling</option>
+                        <option value="Tennis">Tennis</option>
+                        <option value="Table-Tennis">Table-Tennis</option>
+                        <option value="BasketBall">BasketBall</option>
+                        <option value="Archery">Archery</option>
+                        <option value="Kabbadi">Kabbadi</option>
+                        <option value="Chess">Chess</option>
+                        <option value="Shooting">Shooting</option>
+                        <option value="Athletics">Athletics</option>
+                        <option value="Esports">Esports</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="Cityy" class="form-label">City</label>
+                    <select id="Cityy" ng-model="Cityy" name="Cityy" class="form-select">
+                        <option value="none">Select</option>
+                        <option ng-repeat="obj in cities" value="{{obj.city}}">{{obj.city}}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="age" class="form-label">Age</label>
+                    <input type="number" ng-model="age" id="age" class="form-control" required>
+                </div>
+            </div>
+            <input type="button" class="btn btn-primary search-button" ng-click="dofetchman(Sportss,Cityy)"
+                value="Search Events">
+        </div>
+
+        <div class="container event-cards-container">
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 event-card-col" ng-repeat="obj in jsonAry">
+                    <div class="card event-card">
+                        <img src="./pics/blank.png" class="card-img-top event-card-img" alt="Event Image">
+                        <div class="card-body event-card-body">
+                            <h5 class="card-title">Organizer: {{obj.title}}</h5>
+                            <p>Details for Upcoming event</p>
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailsModal"
+                                ng-click="doShowDetails(obj);">Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Event Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Email ID:</strong> {{oneRecord.emailid}}</p>
+                        <p><strong>Title:</strong> {{oneRecord.title}}</p>
+                        <p><strong>Date of Event:</strong> {{oneRecord.doe}}</p>
+                        <p><strong>Time of Event:</strong> {{oneRecord.toe}}</p>
+                        <p><strong>Address/Location:</strong> {{oneRecord.address}}</p>
+                        <p><strong>State:</strong> {{oneRecord.state}}</p>
+                        <p><strong>City:</strong> {{oneRecord.city}}</p>
+                        <p><strong>Zip:</strong> {{oneRecord.zip}}</p>
+                        <p><strong>Sports Category:</strong> {{oneRecord.sports}}</p>
+                        <p><strong>Minimum Age:</strong> {{oneRecord.minage}}</p>
+                        <p><strong>Maximum Age:</strong> {{oneRecord.maxage}}</p>
+                        <p><strong>Last Date of Registration:</strong> {{oneRecord.lastdate}}</p>
+                        <p><strong>Time of Registration:</strong> {{oneRecord.timeR}}</p>
+                        <p><strong>Tournament Fee:</strong> {{oneRecord.fee}}</p>
+                        <p><strong>Prize:</strong> {{oneRecord.prize}}</p>
+                        <p><strong>Contact Number:</strong> {{oneRecord.contact}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

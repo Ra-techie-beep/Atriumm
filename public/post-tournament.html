@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Atriom - Post Tournament</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+</head>
+
+<script>
+    $(document).ready(function () {
+        // Function to validate email and show feedback
+        function validateEmail() {
+            let email = $("#inputEmail4").val().trim();
+            let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$/;
+            const emailInput = $("#inputEmail4");
+            const feedbackDiv = emailInput.next(".invalid-feedback");
+
+            if (email === "") {
+                emailInput.removeClass("is-valid").addClass("is-invalid");
+                feedbackDiv.text("Email cannot be empty.");
+                return false;
+            } else if (!regex.test(email)) {
+                emailInput.removeClass("is-valid").addClass("is-invalid");
+                feedbackDiv.text("Please enter a valid email address.");
+                return false;
+            } else {
+                emailInput.removeClass("is-invalid").addClass("is-valid");
+                feedbackDiv.text(""); // Clear feedback
+                return true;
+            }
+        }
+
+        // Run validation on blur
+        $("#inputEmail4").blur(validateEmail);
+
+        // Run validation on form submission
+        $("#savewithAjax").click(function (event) {
+            // Prevent default form submission to handle validation
+            event.preventDefault();
+
+            let isEmailValid = validateEmail();
+            let isFormValid = true;
+
+            // Basic validation for all required fields
+            $(".form-control[required], .form-select[required]").each(function () {
+                if ($(this).val() === "" || $(this).val() === "Choose") {
+                    $(this).addClass("is-invalid");
+                    isFormValid = false;
+                } else {
+                    $(this).removeClass("is-invalid").addClass("is-valid");
+                }
+            });
+
+            if (!isFormValid || !isEmailValid) {
+                alert("Please fill in all required fields correctly.");
+                return;
+            }
+
+            let obj = {
+                type: "get",
+                url: "/save-details",
+                data: {
+                    inputEmail: $("#inputEmail4").val(),
+                    inputTitle: $("#inputTitle4").val(),
+                    inputDate: $("#inputDate").val(),
+                    inputTime: $("#inputTime").val(),
+                    inputAddress: $("#inputAddress").val(),
+                    inputState: $("#inputState").val(),
+                    inputCity: $("#inputCity").val(),
+                    inputZip: $("#inputZip").val(),
+                    inputSport: $("#inputSport").val(),
+                    inputAge: $("#inputAge").val(),
+                    inputAge2: $("#inputAge2").val(),
+                    inputLast: $("#inputLast").val(),
+                    inputTimeR: $("#inputTimeR").val(),
+                    inputFee: $("#inputFee").val(),
+                    inputPrize: $("#inputPrize").val(),
+                    inputContact4: $("#inputContact4").val()
+                }
+            }
+            $.ajax(obj).then(
+                function (response) {
+                    alert(response);
+                    // Optionally clear form or redirect after successful submission
+                }).fail(function (err) { alert("Error: " + (err.message || "Unknown error occurred.")); })
+        })
+    })
+</script>
+<script>
+    function showUser() {
+        let activeUser = localStorage.getItem("activeUser");
+        if (activeUser) {
+            document.getElementById("inputEmail4").value = activeUser;
+            $("#inputEmail4").prop("readonly", true); // Make email read-only if activeUser exists
+        }
+    }
+</script>
+
+<style>
+    /* Global box-sizing for consistent layouts */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: #f8f9fa;
+        /* Light background for overall page */
+    }
+
+    /* Navbar adjustments for responsiveness */
+    .navbar {
+        height: 65px;
+        width: 100%;
+        padding: 0 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        /* Vertically center content */
+    }
+
+    .navbar-brand-img {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-left: 10px;
+        object-fit: cover;
+    }
+
+    .navbar-brand {
+        font-size: 22px !important;
+        margin-left: 8px;
+        font-weight: 700;
+        color: #fff;
+        /* Ensure brand name is visible on primary background */
+    }
+
+    /* Main content container */
+    .main-content-container {
+        flex-grow: 1;
+        padding: 20px 15px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        /* Align content to the top within the flex container */
+        width: 100%;
+    }
+
+    .form-card {
+        background-color: #fff;
+        border: 2px solid #000;
+        border-radius: 10px;
+        padding: 25px 20px;
+        /* Adjusted padding for smaller screens */
+        width: 100%;
+        max-width: 900px;
+        /* Max width for the form container */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title-bar {
+        background-color: #dc3545;
+        /* Danger color from Bootstrap */
+        height: 40px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 20px;
+        border-radius: 10px;
+        padding-top: 5px;
+        margin-top: -45px;
+        /* Pulls the title bar up to overlap the border */
+        margin-bottom: 20px;
+        /* Space below the title bar */
+        width: 100%;
+        max-width: 350px;
+        /* Fixed width for the title bar */
+        color: aliceblue;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: center;
+        /* Center itself within the flex container */
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        /* Consistent spacing between form groups */
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+        /* Ensure label takes full width */
+    }
+
+    .form-control,
+    .form-select {
+        height: 40px;
+        /* Consistent height for all inputs */
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Custom validation styles (Bootstrap's default `is-invalid` and `is-valid` work well) */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .form-control.is-valid,
+    .form-select.is-valid {
+        border-color: #198754;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.1-1.4 1.1-.4L3.8 6.73l3.6-4.4c.6-.63 1.6-.1 1.2.7L4.3 7.23c-.2.2-.4.3-.7.3-.3 0-.5-.1-.7-.3z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .invalid-feedback {
+        display: none;
+        /* Hidden by default, shown by JS */
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
+
+    .form-control.is-invalid + .invalid-feedback {
+        display: block;
+    }
+
+
+    /* Submit button */
+    .publish-button {
+        width: 80%;
+        /* Wider on small screens */
+        max-width: 200px;
+        /* Limit max width */
+        padding: 12px 20px;
+        margin-top: 20px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+    }
+
+
+    /* --- Media Queries for Laptop/Tablet --- */
+    @media (min-width: 768px) {
+        .navbar {
+            height: 80px;
+            padding: 0 40px;
+        }
+
+        .navbar-brand-img {
+            width: 90px;
+            height: 80px;
+            margin-left: 40px;
+        }
+
+        .navbar-brand {
+            font-size: 32px !important;
+            margin-right: 1220px !important;
+            /* Keeps brand left and pushes content right */
+            margin-left: 15px;
+        }
+
+        .main-content-container {
+            padding: 30px;
+        }
+
+        .form-card {
+            padding: 40px 50px;
+            /* More padding on larger screens */
+        }
+
+        .form-title-bar {
+            margin-top: -65px;
+            /* Adjust top margin for larger title bar */
+            max-width: 400px;
+            /* Slightly wider title bar */
+        }
+
+        .g-3 {
+            --bs-gutter-x: 1.5rem;
+            /* Default Bootstrap gutter */
+            --bs-gutter-y: 1rem;
+        }
+
+        .col-md-6 {
+            flex: 0 0 auto;
+            width: 50%;
+        }
+
+        .col-md-4 {
+            flex: 0 0 auto;
+            width: 33.333333%;
+        }
+
+        .col-md-3 {
+            flex: 0 0 auto;
+            width: 25%;
+        }
+
+        .col-md-2 {
+            flex: 0 0 auto;
+            width: 16.666667%;
+        }
+
+        /* Adjust input specific column widths for optimal layout */
+        .form-row-custom .col-6 {
+            flex: 0 0 auto;
+            width: 50%;
+        }
+
+        .form-row-custom .col-4 {
+            flex: 0 0 auto;
+            width: 33.333333%;
+        }
+
+        .form-row-custom .col-3 {
+            flex: 0 0 auto;
+            width: 25%;
+        }
+
+        .form-row-custom .col-2 {
+            flex: 0 0 auto;
+            width: 16.666667%;
+        }
+
+        .publish-button {
+            width: auto;
+            /* Auto width for button on desktop */
+        }
+    }
+</style>
+
+<body onload="showUser();">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary">
+        <div class="container-fluid">
+            <img src="./pics/Preview.png" alt="Atriom Logo" class="navbar-brand-img">
+            <a class="navbar-brand" href="/index.html" style="color:black">Atriom</a>
+            </div>
+    </nav>
+
+    <div class="container main-content-container">
+        <div class="form-card">
+            <center>
+                <div class="form-title-bar">
+                    Post-Tournament Details
+                </div>
+            </center>
+            <br>
+            <form class="row g-3" method="post" enctype="multipart/form-data">
+                <div class="col-md-6 col-12 form-group">
+                    <label for="inputEmail4" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="inputEmail4" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-md-6 col-12 form-group">
+                    <label for="inputTitle4" class="form-label">Event-Title</label>
+                    <input type="text" class="form-control" id="inputTitle4" required>
+                </div>
+
+                <div class="col-md-4 col-12 form-group">
+                    <label for="inputDate" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="inputDate" required>
+                </div>
+                <div class="col-md-2 col-12 form-group">
+                    <label for="inputTime" class="form-label">Time</label>
+                    <input type="time" class="form-control" id="inputTime" required>
+                </div>
+                <div class="col-md-6 col-12 form-group">
+                    <label for="inputAddress" class="form-label">Address/Location</label>
+                    <input type="text" class="form-control" id="inputAddress" placeholder="Event Address" required>
+                </div>
+
+                <div class="col-md-6 col-12 form-group">
+                    <label for="inputState" class="form-label">State</label>
+                    <select id="inputState" class="form-select" required>
+                        <option value="">Choose</option>
+                        <option value="Andhra Pardesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pardesh">Arunachal Pradesh</option>
+                        <option value="AssaM">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chattisgarh">Chhattisgarh</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pardesh">Himachal Pradesh</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pardesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pardesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                </div>
+                <div class="col-md-4 col-12 form-group">
+                    <label for="inputCity" class="form-label">City</label>
+                    <input type="text" class="form-control" id="inputCity" required>
+                </div>
+                <div class="col-md-2 col-12 form-group">
+                    <label for="inputZip" class="form-label">Zip</label>
+                    <input type="text" class="form-control" id="inputZip" required pattern="[0-9]{6}"
+                        title="Please enter a 6-digit zip code">
+                </div>
+                <div class="col-md-4 col-12 form-group">
+                    <label for="inputSport" class="form-label">Sports Category</label>
+                    <select id="inputSport" class="form-select" required>
+                        <option value="">Choose</option>
+                        <option value="Cricket">Cricket</option>
+                        <option value="Hockey">Hockey</option>
+                        <option value="Football">Football</option>
+                        <option value="Badminton">Badminton</option>
+                        <option value="Boxing">Boxing</option>
+                        <option value="Wrestling">Wrestling</option>
+                        <option value="Tennis">Tennis</option>
+                        <option value="Table-Tennis">Table-Tennis</option>
+                        <option value="BasketBall">Basketball</option>
+                        <option value="Archery">Archery</option>
+                        <option value="Kabbadi">Kabaddi</option>
+                        <option value="Chess">Chess</option>
+                        <option value="Shooting">Shooting</option>
+                        <option value="Athletics">Athletics</option>
+                        <option value="Esports">Esports</option>
+                    </select>
+                </div>
+                <div class="col-md-4 col-12 form-group">
+                    <label for="inputAge" class="form-label">Minimum Age</label>
+                    <input type="number" class="form-control" id="inputAge" required min="1" max="100">
+                </div>
+                <div class="col-md-4 col-12 form-group">
+                    <label for="inputAge2" class="form-label">Maximum Age</label>
+                    <input type="number" class="form-control" id="inputAge2" required min="1" max="100">
+                </div>
+                <div class="col-md-3 col-12 form-group">
+                    <label for="inputLast" class="form-label">Last Date of Registration</label>
+                    <input type="date" class="form-control" id="inputLast" required>
+                </div>
+                <div class="col-md-3 col-12 form-group">
+                    <label for="inputTimeR" class="form-label">Time of Registration</label>
+                    <input type="time" class="form-control" id="inputTimeR" required>
+                </div>
+                <div class="col-md-3 col-12 form-group">
+                    <label for="inputFee" class="form-label">Entry Fee (In Rupees)</label>
+                    <input type="number" class="form-control" id="inputFee" required min="0">
+                </div>
+                <div class="col-md-3 col-12 form-group">
+                    <label for="inputPrize" class="form-label">Prize Pool (In Rupees)</label>
+                    <input type="number" class="form-control" id="inputPrize" required min="0">
+                </div>
+                <div class="col-md-6 col-12 form-group mx-auto">
+                    <label for="inputContact4" class="form-label">Contact Details</label>
+                    <input type="number" class="form-control" id="inputContact4" required pattern="[0-9]{10}"
+                        title="Please enter a 10-digit contact number">
+                </div>
+                <div class="col-12 text-center mt-4">
+                    <button type="submit" class="btn btn-success publish-button" id="savewithAjax">
+                        Publish Event
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

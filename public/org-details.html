@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Bootstrap demo</title>
+    <script>
+        // install 
+        function showPrev(fileRef, imgRef) {
+            const [file] = fileRef.files
+            if (file) {
+                imgRef.src = URL.createObjectURL(file)
+            }
+        }  // for pic preview(above code);
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+
+    <script>
+        //---------------------------------------
+
+        $(document).ready(function () {
+            $("#btnfetchwithAjax").click(function () {
+
+                let obj = {
+                    type: "get",
+                    url: "/get-one",
+                    data: {
+                        inputEmail: $("#inputEmail").val()
+                    }
+                }
+                $.ajax(obj).then(
+                    function (responseJsonAry) {
+
+                        let orgname = responseJsonAry[0].orgname;
+                        let regnumber = responseJsonAry[0].regnumber;
+                        let address = responseJsonAry[0].address;
+                        let address2 = responseJsonAry[0].address2;
+                        let city = responseJsonAry[0].city;
+                        let state = responseJsonAry[0].state;
+                        let website = responseJsonAry[0].website;
+                        let insta = responseJsonAry[0].insta;
+                        let head = responseJsonAry[0].head;
+                        let contact = responseJsonAry[0].contact;
+                        let picurl = responseJsonAry[0].picurl;
+                        let otherinfo = responseJsonAry[0].otherinfo;
+                        let zip = responseJsonAry[0].zip;
+                        let dealinsports = responseJsonAry[0].dealinsports;
+
+                        $("#inputName").val(orgname);
+                        $("#inputReg").val(regnumber);
+                        $("#inputState").val(state);
+                        $("#inputCity").val(city);
+                        $("#inputZip").val(zip);
+                        $("#inputAddress").val(address);
+                        $("#inputAddress2").val(address2);
+                        $("#inputDeal").val(dealinsports);
+                        $("#inputWeb").val(website);
+                        $("#inputInsta").val(insta);
+                        $("#inputHead").val(head);
+                        $("#inputContact").val(contact);
+                        $("#previeww").prop("src", picurl);
+                        $("#hdn").val(picurl);
+                        $("#inputinfo").val(otherinfo);
+
+                    }).fail(function (err) { alert(err.message) })
+
+            })
+        })
+    </script>
+    <style>
+        input[type="text"] {
+            border: 2px black solid;
+        }
+
+        .text {
+            margin-right: 155px;
+        }
+    </style>
+</head>
+<script>
+    function showUser() {
+        let activeUser = localStorage.getItem("activeUser");
+        document.getElementById("inputEmail").value = activeUser;
+    }
+</script>
+
+<body onload="showUser();">
+
+    <body>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary" style="height: 80px;width:100%">
+        <div class="container-fluid">
+            <img src="./pics/Preview.png" alt=""
+                style="border-radius:100px;width:90px;height:80px;margin-left:40px;margin-top:-10px">
+            <a class="navbar-brand " href="/index.html"
+                style="font-size:32px;margin-right:1220px;font-weight:700;">Atriom</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            </div>
+        
+    </nav>
+
+        <div class="container mt-3">
+            <div class="row">
+                <center>
+                    <div class="col-md-7 " style="height:110%;border:2px black solid;border-radius:10px;">
+                        <center>
+                            <div class="col-md-10 bg-danger" style="height:40px;text-align:center;
+                            font-weight:500;font-size:20px;width:250px;
+                            border-radius:10px;padding-top:5px;
+                            margin-top:20px">
+                                Organization Details</div>
+                        </center><br><br>
+                        <center>
+                            <div class="col-md-10">
+                                <form class="row g-3" action="/server-signup-safe" method="post"
+                                    enctype="multipart/form-data">
+                                    <input type="hidden" id="hdn" name="hdn">
+                                    <div class="col-md-8">
+                                        <label for="inputEmail4" class="form-label text"
+                                            style="padding-right:250px">Email</label>
+                                        <input type="text" class="form-control" id="inputEmail" name="inputEmail"
+                                            style="float:right" readonly>
+                                        <div style="margin-left:450px;"><input type="button" value="Search"
+                                                id="btnfetchwithAjax"
+                                                style="width:110px;background-color: rgb(68, 68, 199);border-radius:5px;height:35px">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text">Organization Name</label>
+                                        <input type="text" class="form-control" id="inputName" name="inputName">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text">Registration Number</label>
+                                        <input type="text" class="form-control" id="inputReg" name="inputReg">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="inputState" class="form-label text">State</label>
+                                        <select id="inputState" name="inputState" class="form-select"
+                                            style="border:2px black solid;">
+                                            <option>Choose</option>
+                                            <option value="Andhra Pardesh">Andhra Pardesh</option>
+                                            <option value="Arunachal Pardesh">Arunachal Pardesh</option>
+                                            <option value="AssaM">AssaM</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chattisgarh">Chattisgarh</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Pardesh">Himachal Pardesh</option>
+                                            <option value="Jharkhand">Jharkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Madhya Pardesh">Madhya Pardesh</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Manipur">Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Odisha">Odisha</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Uttar Pardesh">Uttar Pardesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="inputCity" class="form-label text">City</label>
+                                        <input type="text" class="form-control" id="inputCity" name="inputCity">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="inputZip" class="form-label text">Zip</label>
+                                        <input type="text" class="form-control" id="inputZip" NAME="inputZip">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="inputAddress" class="form-label text"
+                                            style="padding-right:250px">Address</label>
+                                        <input type="text" class="form-control" id="inputAddress" name="inputAddress"
+                                            placeholder="1234 Main St">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="inputAddress2" class="form-label text"
+                                            style="margin-top:-40px;padding-right:70px;">Address 2</label>
+                                        <input type="text" class="form-control" id="inputAddress2" name="inputAddress2"
+                                            placeholder="Apartment, studio, or floor">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label text" style="padding-right:365px">Deals in
+                                            Sports</label>
+                                        <input type="text" class="form-control" id="inputDeal" name="inputDeal">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text" style="padding-right:250px">Website</label>
+                                        <input type="text" class="form-control" id="inputWeb" name="inputWeb">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text">Instagram Account</label>
+                                        <input type="text" class="form-control" id="inputInsta" name="inputInsta">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text" style="margin-right:130px">Head of
+                                            Organization</label>
+                                        <input type="text" class="form-control" id="inputHead" name="inputHead">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text" style="margin-right:150px">Contact Number</label>
+                                        <input type="text" class="form-control" id="inputContact" name="inputContact">
+                                    </div>
+                                    <div style="padding-right:450px;"> Registration Certificate Pic <br>
+                                        <input type="file" name="profilePic" onchange="showPrev(profilePic,previeww);"
+                                            style="border:2px gray solid;border-radius:5px;margin-right:350px;">
+                                    </div>
+                                    <div style="width:100px;height:100px;"> <img src="pics/accept.png" alt="preview"
+                                            id="previeww" name="previeww" height="100px" width="100px"></div>
+                                    <br>
+                                    <div class="col-md-12">
+                                        <label class="form-label text" style="padding-right:310px">Other
+                                            Information</label>
+                                        <input type="text" class="form-control" id="inputinfo" name="inputinfo"
+                                            style="height:70px;">
+                                    </div>
+                                </form><br>
+                                <input type="submit" value="Send to Server" class="btn btn-primary"
+                                    formaction="/server-signup-safe">
+                                <input type="submit" value="Modify" class="btn btn-primary" id="inputupdate"
+                                    formaction="/Update-user">
+                            </div>
+                        </center>
+                    </div>
+
+            </div>
+            </center>
+        </div>
+    </body>
+
+</html>
